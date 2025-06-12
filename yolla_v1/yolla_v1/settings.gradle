@@ -1,0 +1,36 @@
+//rootProject.name = 'yolla'
+// Gradle Settings faylı
+
+// Plugin management
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+// Root project adı
+rootProject.name = 'order-management-system'
+
+
+// Dependency resolution management
+dependencyResolutionManagement {
+    repositories {
+        mavenCentral()
+        // Maven repository əlavə etmək üçün
+        // maven { url 'https://repo.spring.io/milestone' }
+    }
+}
+
+// Gradle Enterprise (ixtiyari - böyük layihələr üçün)
+// plugins {
+//     id 'com.gradle.enterprise' version '3.15.1'
+// }
+
+// Build cache konfiqurasiyası
+buildCache {
+    local {
+        enabled = true
+        directory = new File(rootDir, 'build-cache')
+        removeUnusedEntriesAfterDays = 30
+    }
+}

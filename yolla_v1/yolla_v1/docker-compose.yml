@@ -1,0 +1,187 @@
+# Sifariş İdarəetməsi Sistemi - Docker Compose
+# Bu fayl bütün servislər (app, database, message queue) birlikdə işə salır
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres
+    container_name: order-system-postgres
+    environment:
+      POSTGRES_DB: order_system_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: your_password_here
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - order-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d order_system_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: order-system-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_VHOST: /
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"    # AMQP port
+      - "15672:15672"  # Management UI
+    networks:
+      - order-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # Redis Cache (ixtiyari - cache üçün)
+  redis:
+    image: redis:7-alpine
+    container_name: order-system-redis
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - order-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Order Management Application
+  app_yolla:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: order-system-app
+    environment:
+      # Database konfiqurasiyası
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/order_system_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: your_password_here
+
+      # RabbitMQ konfiqurasiyası
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+
+      # Redis konfiqurasiyası (əgər istifadə edirsinizsə)
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+
+      # JWT konfiqurasiyası
+      JWT_SECRET: order_system_jwt_secret_key_2024_very_secure_key_docker
+      JWT_EXPIRATION: 86400000
+
+      # OTP konfiqurasiyası
+      OTP_EXPIRATION_MINUTES: 5
+      OTP_MAX_ATTEMPTS: 3
+
+      # SMS konfiqurasiyası
+      SMS_PROVIDER: test
+      SMS_TEST_MODE: true
+
+      # Spring profile
+      SPRING_PROFILES_ACTIVE: docker
+
+      # JVM konfiqurasiyası
+      JAVA_OPTS: "-Xmx1024m -Xms512m"
+
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - order-network
+    restart: unless-stopped
+    volumes:
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx Reverse Proxy (istəyə görə)
+  nginx:
+    image: nginx:alpine
+    container_name: order-system-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - app_yolla
+    networks:
+      - order-network
+    restart: unless-stopped
+    profiles:
+      - production
+
+# Network konfiqurasiyası
+networks:
+  order-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+# Volume konfiqurasiyası
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/postgres
+
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/rabbitmq
+
+  redis_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./data/redis
+
+  app_logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./logs
+
+# Development üçün override service
+# docker-compose.override.yml faylında istifadə olunur

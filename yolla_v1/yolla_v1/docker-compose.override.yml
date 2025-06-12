@@ -1,0 +1,122 @@
+# Development üçün Docker Compose Override
+# Bu fayl avtomatik olaraq docker-compose.yml ilə birləşir
+
+services:
+  # Development-da PostgreSQL konfiqurasiyası
+  postgres:
+    environment:
+      POSTGRES_PASSWORD: dev_password_123
+    ports:
+      - "5433:5432"  # Conflict-dən qaçmaq üçün fərqli port
+
+  # Development-da RabbitMQ konfiqurasiyası
+  rabbitmq:
+    environment:
+      RABBITMQ_DEFAULT_USER: dev_user
+      RABBITMQ_DEFAULT_PASS: dev_password
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+
+  # Development Application konfiqurasiyası
+  app_yolla:
+    build:
+      target: development  # Development Dockerfile target
+    environment:
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/order_system_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: dev_password_123
+
+      # RabbitMQ
+      SPRING_RABBITMQ_USERNAME: dev_user
+      SPRING_RABBITMQ_PASSWORD: dev_password
+
+      # Development settings
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_JPA_SHOW_SQL: true
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
+      # Logging
+      LOGGING_LEVEL_COM_APP_YOLLA: DEBUG
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+
+      # Development JWT (aşağı təhlükəsizlik)
+      JWT_SECRET: dev_secret_key_not_for_production
+      JWT_EXPIRATION: 3600000  # 1 saat (development üçün qısa)
+
+      # OTP development settings
+      OTP_EXPIRATION_MINUTES: 10  # Daha uzun test üçün
+      OTP_MAX_ATTEMPTS: 5
+
+      # SMS test mode
+      SMS_PROVIDER: test
+      SMS_TEST_MODE: true
+
+    volumes:
+      # Source kod live reload üçün
+      - ./src:/app/src:ro
+      - ./build.gradle:/app/build.gradle:ro
+      - ./gradle.properties:/app/gradle.properties:ro
+      # Log faylları
+      - ./logs:/app/logs
+    ports:
+      - "8080:8080"
+      - "5005:5005"  # Java debug port
+    command: ["./gradlew", "bootRun", "--continuous", "--args='--spring.profiles.active=dev'"]
+
+  # Development üçün əlavə servislər
+
+  # Adminer - Database management UI
+  adminer:
+    image: adminer:4.8.1
+    container_name: order-system-adminer
+    ports:
+      - "8081:8080"
+    networks:
+      - order-network
+    depends_on:
+      - postgres
+    environment:
+      ADMINER_DEFAULT_SERVER: postgres
+
+  # MailHog - Email testing (SMS əvəzinə email test üçün)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: order-system-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - order-network
+
+  # Swagger UI standalone (istəyə görə)
+  swagger-ui:
+    image: swaggerapi/swagger-ui:latest
+    container_name: order-system-swagger
+    ports:
+      - "8082:8080"
+    environment:
+      SWAGGER_JSON_URL: http://app-yolla:8080/v3/api-docs
+    depends_on:
+      - app_yolla
+    networks:
+      - order-network
+    profiles:
+      - swagger
+
+# Development network override
+networks:
+  order-network:
+    driver: bridge
+
+# Development volumes override
+volumes:
+  postgres_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_logs:
+    driver: local

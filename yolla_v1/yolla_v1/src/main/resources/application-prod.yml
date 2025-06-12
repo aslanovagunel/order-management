@@ -1,0 +1,147 @@
+# Production Environment Konfiqurasiyası
+# Bu fayl src/main/resources/ qovluğunda application-prod.yml adı ilə saxlanmalıdır
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+  # Production üçün xətaları gizlət
+  error:
+    include-message: never
+    include-binding-errors: never
+    include-stacktrace: never
+  # Compression aktiv et
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+
+spring:
+  application:
+    name: order-management-system
+
+  # PostgreSQL Production Database
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/order_system_db}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    # Connection pool konfiqurasiyası
+    hikari:
+      connection-timeout: 20000
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 300000
+      max-lifetime: 1200000
+      auto-commit: false
+
+  # JPA və Hibernate (production üçün)
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Məhsulda schema dəyişikliyi etmə
+    show-sql: false      # Performance üçün SQL göstərmə
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+
+  # RabbitMQ Production
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:guest}
+    password: ${RABBITMQ_PASSWORD}
+    virtual-host: ${RABBITMQ_VHOST:/}
+    connection-timeout: 10000
+
+  # Jackson JSON (production üçün optimize)
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: false  # Bandwidth qənaəti üçün
+    default-property-inclusion: NON_NULL
+
+# JWT (production üçün güclü təhlükəsizlik)
+jwt:
+  secret: ${JWT_SECRET}  # Mütləq environment variable-dan alınmalıdır
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 saat
+
+# OTP (production üçün sıx tənzimləmə)
+otp:
+  expiration-minutes: ${OTP_EXPIRATION_MINUTES:5}
+  max-attempts: ${OTP_MAX_ATTEMPTS:3}
+
+# SMS (production üçün həqiqi servis)
+sms:
+  provider: ${SMS_PROVIDER:twilio}
+  test-mode: false
+  twilio:
+    account-sid: ${TWILIO_ACCOUNT_SID}
+    auth-token: ${TWILIO_AUTH_TOKEN}
+    from-number: ${TWILIO_FROM_NUMBER}
+
+# Logging (production üçün optimized)
+logging:
+  level:
+    com.app.yolla: INFO
+    org.springframework.security: WARN
+    org.hibernate: WARN
+    org.springframework.web: WARN
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ./logs/order-system.log
+    max-size: 100MB
+    max-history: 30
+
+# Actuator (production üçün məhdud)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: when-authorized
+    metrics:
+      enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# Production üçün təhlükəsizlik
+security:
+  require-ssl: true
+  session-timeout: 1800  # 30 dəqiqə
+
+# Production üçün xüsusi konfiqurasiya
+app:
+  cors:
+    allowed-origins: ${ALLOWED_ORIGINS:https://yourdomain.com}
+  file-upload:
+    max-size: ${MAX_FILE_SIZE:5MB}
+    allowed-types: "image/jpeg,image/png,application/pdf"
+    storage-path: ${FILE_STORAGE_PATH:/app/uploads}
+
+# Database migration (production üçün)
+flyway:
+  enabled: true
+  locations: classpath:db/migration
+  baseline-on-migrate: true
+
+# Cache konfiqurasiyası (production üçün)
+cache:
+  type: caffeine
+  caffeine:
+    spec: maximumSize=1000,expireAfterWrite=1h
+
+# Rate limiting (production üçün)
+rate-limit:
+  enabled: true
+  requests-per-minute: 60
+  requests-per-hour: 1000

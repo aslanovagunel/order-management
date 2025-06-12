@@ -1,0 +1,117 @@
+# Development Environment Konfiqurasiyası
+# Bu fayl src/main/resources/ qovluğunda application-dev.yml adı ilə saxlanmalıdır
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+  error:
+    include-message: always
+    include-binding-errors: always
+
+spring:
+  application:
+    name: order-management-system-dev
+
+  # H2 In-Memory Database (development üçün sürətli)
+  datasource:
+    url: jdbc:h2:mem:orderdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  # H2 Console (browser-da database görmək üçün)
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+      settings:
+        web-allow-others: true
+
+  # JPA və Hibernate (development üçün)
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: create-drop  # Hər restart-da schema yenilənir
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect 
+        format_sql: true
+        use_sql_comments: true
+  sql:
+    init:
+      mode: always
+  
+
+  # RabbitMQ (development üçün yerli)
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+  # Jackson JSON
+  jackson:
+    serialization:
+      indent-output: true  # JSON-u gözəl formatla göstər
+
+  # Development üçün əlavə konfiqurasiya
+  devtools:
+    restart:
+      enabled: true
+    livereload:
+      enabled: true
+
+# JWT (development üçün aşağı təhlükəsizlik)
+jwt:
+  secret: dev_jwt_secret_key_not_secure_for_development_only
+  expiration: 3600000  # 1 saat (test üçün qısa müddət)
+
+# OTP (development üçün asan test)
+otp:
+  expiration-minutes: 10  # Test üçün uzun müddət
+  max-attempts: 5         # Çox cəhd icazəsi
+
+# SMS (development - həmişə test rejimi)
+sms:
+  provider: test
+  test-mode: true
+
+# Logging (development üçün ətraflı)
+logging:
+  level:
+    com.app.yolla: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"
+
+# Actuator (development üçün bütün endpoint-lər açıq)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+    beans:
+      enabled: true
+    env:
+      enabled: true
+
+# Development üçün xüsusi konfiqurasiya
+app:
+  cors:
+    allowed-origins: "http://localhost:3000,http://localhost:4200,http://127.0.0.1:3000"
+  file-upload:
+    max-size: 10MB
+    allowed-types: "image/jpeg,image/png,application/pdf"
+
+# Security (development üçün yüngül)
+security:
+  require-ssl: false
+  session-timeout: 3600  # 1 saat

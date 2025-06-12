@@ -1,0 +1,63 @@
+# Yolla Sifariş Sistemi Konfiqurasiya Faylı
+# Bu fayl aplikasiyanın bütün əsas tənzimləmələrini ehtiva edir
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: yolla-order-system
+
+  # Əvvəlcə database-siz başlayaq
+ # autoconfigure:
+  #  exclude:
+   #   - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+   #   - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+
+  # Jackson JSON Tənzimləmələri
+  jackson:
+    serialization:
+      fail-on-empty-beans: false
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+    time-zone: Asia/Baku
+
+
+# JWT Token Tənzimləmələri
+jwt:
+  secret: yolla_jwt_secret_key_2024_very_secure_key
+  expiration: 86400000  # 24 saat (millisaniyə ilə)
+
+# OTP Tənzimləmələri
+otp:
+  expiration-minutes: 5  # OTP kodun etibarlılıq müddəti
+  max-attempts: 3        # Maksimum yanlış cəhd sayı
+
+# SMS Xidməti Tənzimləmələri (test rejimində)
+sms:
+  provider: test
+  test-mode: true
+
+# Logging Tənzimləmələri
+logging:
+  level:
+    com.app.yolla: DEBUG
+    org.springframework.security: INFO
+    org.hibernate: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# Actuator Tənzimləmələri
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

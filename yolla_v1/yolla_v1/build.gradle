@@ -1,0 +1,230 @@
+import org.springframework.boot.gradle.tasks.run.BootRun
+
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.2.0'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'jacoco'
+}
+
+group = 'com.app.yolla'
+version = '1.0.0'
+description = 'Order Management System - Java Spring Boot ilə hazırlanmış sifariş idarəetməsi sistemi'
+
+java {
+	sourceCompatibility = '17'
+	targetCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	jwtVersion = '0.11.5'
+	springdocVersion = '2.2.0'
+	testcontainersVersion = '1.19.3'
+}
+dependencies {
+	// Spring Boot Starters
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// Jakarta Validation - EXPLICIT
+	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+	implementation 'jakarta.el:jakarta.el-api:5.0.1'
+	implementation 'org.glassfish:jakarta.el:5.0.0-M1'
+
+	// Database
+	runtimeOnly 'org.postgresql:postgresql'
+	// H2 database development və test üçün
+	implementation 'com.h2database:h2:2.1.214'
+
+	// JWT Libraries - Müvəqqəti söndürülüb
+	// implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"
+	// runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}"
+	// runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"
+
+	// Jackson JSON
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	// API Documentation
+	implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+
+	// SMS Gateway (ixtiyari - istifadə etmək istəsəniz açın)
+	// implementation 'com.twilio.sdk:twilio:9.14.1'
+
+	// Utilities
+	implementation 'org.apache.commons:commons-lang3'
+	implementation 'com.github.ben-manes.caffeine:caffeine'
+
+	implementation 'org.modelmapper:modelmapper:3.1.1'
+
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+	
+	// Development Tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+	// Lombok (ixtiyari - istifadə etmək istəsəniz açın)
+	// compileOnly 'org.projectlombok:lombok'
+	// annotationProcessor 'org.projectlombok:lombok'
+
+	// Test Dependencies - İsteğe bağlı
+	// testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// testImplementation 'org.springframework.security:spring-security-test'
+	// testImplementation 'org.testcontainers:junit-jupiter'
+	// testImplementation 'org.testcontainers:postgresql'
+	// testImplementation platform("org.testcontainers:testcontainers-bom:${testcontainersVersion}")
+}
+
+// Gradle Tasks
+
+// Test konfiqurasiyası
+test {
+	useJUnitPlatform()
+	finalizedBy jacocoTestReport
+}
+
+// Jacoco test coverage
+jacocoTestReport {
+	dependsOn test
+	reports {
+		xml.required = true
+		html.required = true
+	}
+}
+
+// Bootable JAR yaratmaq üçün
+jar {
+	enabled = false
+	archiveClassifier = ''
+}
+
+// Aplikasiyanı işə salmaq üçün
+bootRun {
+	jvmArgs = [
+			'-Dspring.profiles.active=dev',
+			'-Xmx1024m',
+			'-Xms512m'
+	]
+}
+
+// Different profiles üçün tasks
+tasks.register('runDev', BootRun) {
+	group = 'application'
+	description = 'Development profili ilə aplikasiyanı işə salır'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.app.yolla.OrderSystemApplication'
+	args = ['--spring.profiles.active=dev']
+}
+
+tasks.register('runProd', BootRun) {
+	group = 'application'
+	description = 'Production profili ilə aplikasiyanı işə salır'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.app.yolla.OrderSystemApplication'
+	args = ['--spring.profiles.active=prod']
+}
+
+// Docker image yaratmaq üçün (ixtiyari)
+tasks.register('buildDockerImage', Exec) {
+	group = 'docker'
+	description = 'Docker image yaradır'
+	dependsOn bootJar
+	commandLine 'docker', 'build', '-t', "app_yolla:${version}", '.'
+}
+
+// Code quality üçün tasks
+tasks.register('checkCodeStyle') {
+	group = 'verification'
+	description = 'Kod stilini yoxlayır'
+	// Bu tapşırığı istədiyiniz code style tool ilə doldura bilərsiniz
+}
+
+// Database migration task (gələcək üçün)
+tasks.register('migrateDatabase') {
+	group = 'database'
+	description = 'Verilənlər bazası migration işlədır'
+	doLast {
+		println 'Database migration - Coming soon...'
+	}
+}
+
+// Clean edilmiş build
+tasks.register('cleanBuild') {
+	group = 'build'
+	description = 'Təmiz build edir'
+	dependsOn clean, build
+}
+
+// Tam test suite
+tasks.register('fullTest') {
+	group = 'verification'
+	description = 'Bütün testləri işlədib report yaradır'
+	dependsOn test, jacocoTestReport
+}
+
+// Wrapper konfiqurasiyası
+wrapper {
+	gradleVersion = '8.5'
+	distributionType = Wrapper.DistributionType.BIN
+}
+
+// JVM Args konfiqurasiyası
+tasks.withType(JavaCompile).configureEach {
+	options.encoding = 'UTF-8'
+	options.compilerArgs += [
+			'-Xlint:unchecked',
+			'-Xlint:deprecation'
+	]
+}
+
+// Profiles üçün sourceSet konfiqurasiyası
+sourceSets {
+	main {
+		resources {
+			srcDirs = ['src/main/resources']
+		}
+	}
+	test {
+		resources {
+			srcDirs = ['src/test/resources']
+		}
+	}
+}
+
+// Build məlumatları
+tasks.register('printBuildInfo') {
+	group = 'help'
+	description = 'Build məlumatlarını göstərir'
+	doLast {
+		println """
+        =====================================
+        Order Management System Build Info
+        =====================================
+        Project: ${project.name}
+        Version: ${version}
+        Java Version: ${java.sourceCompatibility}
+        Gradle Version: ${gradle.gradleVersion}
+        Spring Boot Version: ${dependencyManagement.importedProperties['spring-boot.version']}
+        Build Time: ${new Date()}
+        =====================================
+        """
+	}
+}
