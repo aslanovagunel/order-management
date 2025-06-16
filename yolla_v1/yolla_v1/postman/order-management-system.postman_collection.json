@@ -1,0 +1,218 @@
+{
+	"info": {
+		"_postman_id": "28001ccc-46e0-4c46-a183-10ba2302c45f",
+		"name": "order-management-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41406902"
+	},
+	"item": [
+		{
+			"name": "add user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phoneNumber\":\"+994557894563\",\r\n    \"fullName\":\"aslanlizaur\",\r\n    \"email\":\"aslanlizaur@gmail.com\",\r\n    \"role\":\"CUSTOMER\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get order-item",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Kzk5NDU1Nzg5NDI1MnxDVVNUT01FUnwyfDE3NDk3NTE5Mjk0NzR8SmdIUlNjWUZCS2Z6VE04Zkgvc253MTNtbDZSSHhoM1pHYTdkVUpuejVhUT0=",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/order-item/1/begin/0/length/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"order-item",
+						"1",
+						"begin",
+						"0",
+						"length",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add order",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Kzk5NDU1Nzg5NDI1M3xDVVNUT01FUnwxfDE3NDk3Mzk1Mjk4MDZ8Q1oyY2pJOVRPK21Wek1EeVdEc3czU1VMQ3R4WGFsUXJqS1k4WllkS2VCWT0=",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"totalAmount\":\"45.2\",\r\n    \"status\":\"PENDING\",\r\n    \"notes\":\"mebleg bu qederdir\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/orders",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "Kzk5NDU1NTA0NTAzOHxBRE1JTnwzfDE3NDk3MzY5NjA5MzN8alNOTGpxMjBuTUx0Unk2bUNPMStSak1hSUgraGhwM1ZYc1BlWFBFd0RHST0=",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"canta\",\r\n    \"description\":\"bu bir esyadir\",\r\n    \"price\":\"19.3\",\r\n    \"stockQuantity\":\"3\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phoneNumber\":\"+994555555555\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/auth/send-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"send-otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "verify-otp",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phoneNumber\":\"+994555555555\",\r\n    \"otpCode\":\"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/auth/verify-otp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"verify-otp"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
