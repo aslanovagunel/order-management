@@ -5,7 +5,6 @@ Bu layihə **sifarişlərin idarə olunması** üçün hazırlanmış sadə və 
 ---
 
 ## 🚀 Texnologiyalar
-
 Bu layihənin əsas texnologiyaları:
 
 - ✅ Java 17
