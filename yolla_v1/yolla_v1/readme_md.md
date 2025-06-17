@@ -1,3 +1,214 @@
+# 📦 Order Management System
+
+Bu layihə **sifarişlərin idarə olunması** üçün hazırlanmış sadə və funksional bir **RESTful API** sistemidir. Backend hissəsi `Java` və `Spring Boot` texnologiyaları ilə yazılıb. Layihə həm **lokal mühitdə**, həm də **Docker konteynerləri** ilə asanlıqla işlədilə bilər. İstifadə rahatlığı üçün `Postman Collection` da əlavə edilib.
+
+---
+
+## 🚀 Texnologiyalar
+
+Bu layihənin əsas texnologiyaları:
+
+- ✅ Java 17
+- ✅ Spring Boot
+- ✅ Spring Data JPA
+- ✅ MySQL / H2 Database
+- ✅ Docker & Docker Compose
+- ✅ Gradle
+- ✅ Postman
+
+
+## 📁 Layihə Strukturu
+
+src/main/java/com/app/yolla/
+├── OrderSystemApplication.java        # 🚀 Spring Boot tətbiqinin giriş nöqtəsi (main class)
+│
+├── config/                            # ⚙️ Layihə konfiqurasiya faylları
+│   ├── SecurityConfig.java            # Spring Security ayarları, JWT filter-lər və s.
+│   └── DatabaseConfig.java            # Datasource və JPA konfiqurasiyası
+│
+├── shared/                            # 🌍 Layihə üzrə ümumi istifadədə olan komponentlər
+│   ├── dto/
+│   │   └── ApiResponse.java           # API nəticələrinin standart formatı (success, message, data)
+│   ├── exception/
+│   │   ├── GlobalExceptionHandler.java # Bütün exception-ların tutulduğu global handler
+│   │   ├── CustomException.java       # Custom exception bazası (əlavə edilə bilər)
+│   │   └── NotFoundException.java     # Məsələn, user/product tapılmayanda atıla bilər
+│   └── security/
+│       └── JwtUtil.java               # JWT yaratmaq, yoxlamaq, claim-ləri oxumaq və s.
+│
+└── modules/                           # 🧩 Modul əsaslı biznes qat
+    ├── user/                          # 👥 İstifadəçi modulu
+    │   ├── controller/
+    │   │   └── UserController.java    # REST endpoint-lər – user CRUD, search, profile və s.
+    │   ├── service/
+    │   │   └── UserService.java       # Biznes məntiq – user yaradılması, dəyişməsi və s.
+    │   ├── repository/
+    │   │   └── UserRepository.java    # Spring Data JPA ilə işləyir (findByPhone və s.)
+    │   ├── entity/
+    │   │   └── User.java              # JPA @Entity – istifadəçi məlumatları
+    │   └── dto/
+    │       └── UserDTO.java           # User üçün request/response formatları
+    │
+    ├── auth/                          # 🔐 Auth modulu
+    │   ├── controller/
+    │   │   └── AuthController.java    # Giriş, qeydiyyat, refresh token endpoint-ləri
+    │   ├── service/
+    │   │   └── AuthService.java       # OTP yoxlaması, JWT generasiyası və s.
+    │   └── entity/
+    │       └── OtpCode.java           # OTP-lər üçün JPA entity (mobil nömrə, kod, expiry və s.)
+    │
+    ├── product/                       # 🛍️ Məhsul modulu 
+    │   ├── controller/ProductController.java
+    │   ├── service/ProductService.java
+    │   ├── repository/ProductRepository.java
+    │   ├── entity/Product.java
+    │   └── dto/ProductDTO.java
+    │
+    └── order/                         # 📦 Sifariş modulu 
+        ├── controller/OrderController.java
+        ├── service/OrderService.java
+        ├── repository/OrderRepository.java
+        ├── entity/Order.java
+        └── dto/OrderDTO.java
+
+
+⚙️ Qurulum Təlimatı
+Bu bölmə layihəni kompüterində necə işə salmağın yollarını izah edir. Aşağıdakı addımları izləyərək sistemi lokal mühitində işlədə bilərsən.
+Əvvəlcə bu layihəni GitHub-dan klonla:
+
+```bash
+git clone https://github.com/aslanovagunel/order-management.git
+cd order-management
+
+Əgər kompüterində Docker və Docker Compose quruludursa, terminalda aşağıdakı əmri yaz:
+docker-compose up -d
+
+Əgər Docker istifadə etmirsənsə, aşağıdakı addımları izləyərək layihəni IDE-də run edə bilərsən:
+Java 17 versiyasının quraşdırıldığından əmin ol.
+Layihəni IntelliJ IDEA və ya Eclipse ilə aç.
+Faylların içindəki application.properties və ya application.yml faylında verilənlər bazasını (H2 və ya MySQL) konfiqurasiya et.
+spring.datasource.url=jdbc:postgresql://localhost:5432/order_db
+spring.datasource.username=postgres
+spring.datasource.password=1234
+spring.jpa.hibernate.ddl-auto=update
+OrderManagementApplication.java faylını run et.
+Server http://localhost:8080 ünvanında işləməyə başlayacaq.
+
+Layihə ilə birlikdə gələn postman/order-management.postman_collection.json faylını Postman proqramına import edərək API-ləri test edə bilərsən.
+Postman collection bu əməliyyatları əhatə edir:
+Yeni user əlavə etmək
+Login olmaq
+Yeni sifariş əlavə etmək
+Yeni mehsul əlavə etmək
+Sifarişləri siyahı şəklində görmək
+
+
+📋 Xüsusiyyətlər
+
+🔐 Authentication və Təhlükəsizlik
+✅ Mobil nömrə və OTP (SMS) ilə doğrulama
+✅ JWT Token (access və refresh token dəstəyi)
+✅ Spring Security ilə role-based authorization
+✅ Role əsaslı giriş nəzarəti – Müştəri, Hazırlayan (Processor), Admin
+✅ Token refresh mexanizmi
+✅ İstifadəçi bloklama/silmə funksiyası (əgər varsa)
+
+👥 İstifadəçi İdarəetməsi
+📱 Mobil nömrə ilə qeydiyyat və giriş
+👤 İstifadəçi məlumatlarının görüntülənməsi və redaktəsi
+🧑‍💼 Rolların dəyişdirilməsi və hüquqların idarəsi
+🔍 İstifadəçilərin axtarışı və filtr olunması
+
+📦 Məhsul (Product) Modulu
+➕ Yeni məhsul əlavə etmək (ad, təsvir, qiymət və s.)
+🔒 Məhsul funksiyalarına yalnız səlahiyyətli rolların çıxışı
+
+🧾 Sifariş (Order) Modulu
+🛒 Müştəri tərəfindən sifarişlərin yaradılması
+🔁 Sifariş statuslarının izlənməsi (Pending, Preparing, Done və s.)
+📦 Hər sifarişdə birdən çox məhsul seçə bilmək
+
+🏗️ Texniki Xüsusiyyətlər
+📐 Domain-Driven Design (DDD) əsaslı layihə strukturu
+🌐 RESTful API + Swagger UI / OpenAPI sənədləşməsi
+🐘 PostgreSQL verilənlər bazası
+📩 RabbitMQ üzərindən SMS/notification növbəsi (queue)
+🐳 Docker və Docker Compose dəstəyi
+🔧 Gradle – build və dependency idarəetməsi
+🧪 JUnit və/və ya Testcontainers ilə test mühiti 
+
+📡 API İstifadəsi (Nümunələr)
+
+1. 🔐 OTP ilə Giriş və Token Əldə Etmək
+
+**Endpoint:** `POST /api/v1/auth/send-otp`  
+**Təsvir:** Mobil nömrəyə OTP göndərir.
+
+```json
+Request:
+POST /api/v1/auth/send-otp
+Content-Type: application/json
+
+{
+  "phoneNumber": "+994501234567"
+}
+
+Endpoint: POST /api/v1/auth/verify-otp
+Təsvir: OTP kodunu təsdiqləyir və access + refresh token qaytarır.
+
+Request:
+POST /api/v1/auth/verify-otp
+Content-Type: application/json
+
+{
+  "phoneNumber": "+994501234567",
+  "otpCode": "123456"
+}
+Response:
+{
+  "accessToken": "eyJhbGciOiJIUzI1NiIs...",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+}
+
+2.Məhsul əlavə etmək
+POST http://localhost:8080/api/v1/products
+Content-Type: application/json
+Authorization: Bearer <token>
+{
+  "name": "canta",
+  "description": "tez gelsin",
+  "price": 19.3,
+  "stockQuantity": 3
+}
+
+3. Sifariş əlavə etmək
+POST /api/orders
+Headers:
+
+http
+Content-Type: application/json
+Authorization: Bearer <token>  (əgər autentifikasiya varsa)
+Body:
+{
+  "totalAmount": 150.75,
+  "status": "PENDING",
+  "notes": "Tez çatdırılma",
+  "items": [
+    {
+      "productId": 1,
+      "quantity": 1
+    },
+    {
+      "productId": 2,
+      "quantity": 2
+    }
+  ]
+}
+
+Sifarişin siyahısını gətirmək
+GET http://localhost:8080/api/v1/order-item/{orderId}/begin/{begin}/length/{length}
+
+
 # 🛒 Order Management System
 
 **Java Spring Boot ilə hazırlanmış sifariş idarəetməsi sistemi**
@@ -350,3 +561,4 @@ Bu layihə MIT lisenziyası altındadır. Ətraflı məlumat üçün [LICENSE](L
 ---
 
 **Made with ❤️ by Order System Team**
+

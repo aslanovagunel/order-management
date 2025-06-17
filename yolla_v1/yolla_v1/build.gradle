@@ -86,8 +86,8 @@ dependencies {
 	// annotationProcessor 'org.projectlombok:lombok'
 
 	// Test Dependencies - İsteğe bağlı
-	// testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	// testImplementation 'org.springframework.security:spring-security-test'
+	 testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	 testImplementation 'org.springframework.security:spring-security-test'
 	// testImplementation 'org.testcontainers:junit-jupiter'
 	// testImplementation 'org.testcontainers:postgresql'
 	// testImplementation platform("org.testcontainers:testcontainers-bom:${testcontainersVersion}")
