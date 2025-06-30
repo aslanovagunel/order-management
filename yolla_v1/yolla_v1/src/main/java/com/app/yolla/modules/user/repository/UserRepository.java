@@ -3,6 +3,7 @@ package com.app.yolla.modules.user.repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ import com.app.yolla.modules.user.entity.UserRole;
  * məlumatlarını tapıb gətirir.
  */
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, UUID> {
 
 	/**
 	 * Telefon nömrəsi ilə istifadəçi tapır Bu metodla OTP sistemi və giriş üçün
@@ -116,11 +117,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 * dəyişir) Məlumat itkisinin qarşısını almaq üçün
 	 */
 	@Query("UPDATE User u SET u.isActive = false WHERE u.id = :userId")
-	void softDeleteUser(@Param("userId") Long userId);
+	void softDeleteUser(@Param("userId") UUID userId);
 
 	/**
 	 * İstifadəçini yenidən aktivləşdirmək üçün
 	 */
 	@Query("UPDATE User u SET u.isActive = true WHERE u.id = :userId")
-	void reactivateUser(@Param("userId") Long userId);
+	void reactivateUser(@Param("userId") UUID userId);
 }

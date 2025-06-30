@@ -1,12 +1,8 @@
 package com.app.yolla.modules.user.controller;
 
-import com.app.yolla.modules.user.dto.UserCreateRequest;
-import com.app.yolla.modules.user.dto.UserDTO;
-import com.app.yolla.modules.user.dto.UserUpdateRequest;
-import com.app.yolla.modules.user.entity.UserRole;
-import com.app.yolla.modules.user.service.UserService;
-import com.app.yolla.shared.dto.ApiResponse;
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +13,27 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.app.yolla.modules.user.dto.UserCreateRequest;
+import com.app.yolla.modules.user.dto.UserDTO;
+import com.app.yolla.modules.user.dto.UserUpdateRequest;
+import com.app.yolla.modules.user.entity.UserRole;
+import com.app.yolla.modules.user.service.UserService;
+import com.app.yolla.shared.dto.ApiResponse;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 /**
  * İstifadəçi Controller Sinfi
@@ -30,6 +44,8 @@ import java.util.List;
  * Analogi: Bu sinif bir "resepsiyonçu" kimidir - müştərilərin sorğularını
  * qəbul edir və düzgün şöbəyə yönləndirir.
  */
+
+@Tag(name = "User", description = "İstifadəçi idarəetməsi əməliyyatları")
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "*") // CORS icazəsi
@@ -82,7 +98,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @userService.findById(#id).phoneNumber == authentication.name")
-    public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<UserDTO>> getUserById(@PathVariable("id") UUID id) {
 
         logger.debug("İstifadəçi sorğusu: ID={}", id);
 
@@ -106,7 +122,7 @@ public class UserController {
                     null
             );
 
-            return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
@@ -117,7 +133,7 @@ public class UserController {
     @GetMapping("/phone/{phoneNumber}")
     @PreAuthorize("hasRole('ADMIN') or #phoneNumber == authentication.name")
     public ResponseEntity<ApiResponse<UserDTO>> getUserByPhone(
-            @PathVariable String phoneNumber) {
+			@PathVariable(name = "phoneNumber") String phoneNumber) {
 
         logger.debug("Telefon nömrəsi ilə istifadəçi sorğusu: {}", phoneNumber);
 
@@ -141,7 +157,7 @@ public class UserController {
                     null
             );
 
-            return ResponseEntity.notFound().build();
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
     }
 
@@ -152,10 +168,10 @@ public class UserController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<UserDTO>>> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sortBy,
-            @RequestParam(defaultValue = "desc") String sortDir) {
+			@RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size,
+			@RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+			@RequestParam(name = "sortDir", defaultValue = "desc") String sortDir) {
 
         logger.debug("Bütün istifadəçilər sorğusu: page={}, size={}", page, size);
 
@@ -195,7 +211,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN') or @userService.findById(#id).phoneNumber == authentication.name")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(
-            @PathVariable Long id,
+			@PathVariable("id") UUID id,
             @Valid @RequestBody UserUpdateRequest request) {
 
         logger.info("İstifadəçi yeniləmə sorğusu: ID={}", id);
@@ -230,7 +246,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> deactivateUser(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<Void>> deactivateUser(@PathVariable("id") UUID id) {
 
         logger.info("İstifadəçi deaktiv etmə sorğusu: ID={}", id);
 
@@ -264,7 +280,7 @@ public class UserController {
      */
     @PutMapping("/{id}/reactivate")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<Void>> reactivateUser(@PathVariable Long id) {
+	public ResponseEntity<ApiResponse<Void>> reactivateUser(@PathVariable("id") UUID id) {
 
         logger.info("İstifadəçi aktivləşdirmə sorğusu: ID={}", id);
 
@@ -299,7 +315,7 @@ public class UserController {
     @GetMapping("/role/{role}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('PREPARER')")
     public ResponseEntity<ApiResponse<List<UserDTO>>> getUsersByRole(
-            @PathVariable UserRole role) {
+			@Parameter(description = "Rolu böyük hərflərlə daxil edin: ADMIN, CUSTOMER, PREPARER", example = "ADMIN") @PathVariable(name = "role") UserRole role) {
 
         logger.debug("Rol üzrə istifadəçi sorğusu: {}", role);
 
@@ -334,9 +350,8 @@ public class UserController {
     @GetMapping("/search")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Page<UserDTO>>> searchUsers(
-            @RequestParam String name,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+			@RequestParam(name = "name") String name, @RequestParam(name = "page", defaultValue = "0") int page,
+			@RequestParam(name = "size", defaultValue = "10") int size) {
 
         logger.debug("İstifadəçi axtarış sorğusu: name={}", name);
 

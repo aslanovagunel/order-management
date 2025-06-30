@@ -80,7 +80,7 @@ git clone https://github.com/aslanovagunel/order-management.git
 cd order-management
 
 Əgər kompüterində Docker və Docker Compose quruludursa, terminalda aşağıdakı əmri yaz:
-docker-compose up -d
+docker run -p 8080:8080 -d aslanovagunel/order-management:v1
 
 Əgər Docker istifadə etmirsənsə, aşağıdakı addımları izləyərək layihəni IDE-də run edə bilərsən:
 Java 17 versiyasının quraşdırıldığından əmin ol.

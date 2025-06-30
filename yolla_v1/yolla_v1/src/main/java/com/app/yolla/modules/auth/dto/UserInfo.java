@@ -1,5 +1,7 @@
 package com.app.yolla.modules.auth.dto;
 
+import java.util.UUID;
+
 /**
  * User Info DTO
  * <p>
@@ -7,7 +9,7 @@ package com.app.yolla.modules.auth.dto;
  */
 public class UserInfo {
 
-    private Long id;
+	private UUID id;
     private String phoneNumber;
     private String fullName;
     private String email;
@@ -17,7 +19,7 @@ public class UserInfo {
     public UserInfo() {
     }
 
-    public UserInfo(Long id, String phoneNumber, String fullName, String email, String role, Boolean isActive) {
+	public UserInfo(UUID id, String phoneNumber, String fullName, String email, String role, Boolean isActive) {
         this.id = id;
         this.phoneNumber = phoneNumber;
         this.fullName = fullName;
@@ -26,11 +28,11 @@ public class UserInfo {
         this.isActive = isActive;
     }
 
-    public Long getId() {
+	public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(UUID id) {
         this.id = id;
     }
 

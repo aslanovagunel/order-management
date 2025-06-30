@@ -1,6 +1,7 @@
 package com.app.yolla.modules.user.dto;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.app.yolla.modules.user.entity.UserRole;
 
@@ -20,7 +21,7 @@ import jakarta.validation.constraints.Size;
  */
 public class UserDTO {
 
-    private Long id;
+	private UUID id;
 
     @NotBlank(message = "Telefon nömrəsi mütləqdir")
     @Pattern(regexp = "^\\+994[0-9]{9}$",
@@ -43,7 +44,7 @@ public class UserDTO {
     }
 
     // Tam konstruktor
-    public UserDTO(Long id, String phoneNumber, String fullName, String email,
+	public UserDTO(UUID id, String phoneNumber, String fullName, String email,
                    UserRole role, Boolean isActive, LocalDateTime createdAt,
                    LocalDateTime updatedAt) {
         this.id = id;
@@ -65,11 +66,11 @@ public class UserDTO {
     }
 
     // Getter və Setter metodları
-    public Long getId() {
+	public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(UUID id) {
         this.id = id;
     }
 

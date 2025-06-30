@@ -1,16 +1,18 @@
 package com.app.yolla.shared.security;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Date;
+import java.util.UUID;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Date;
 
 /**
  * Sadə JWT Utility Sinfi (Heç bir external library olmadan)
@@ -32,7 +34,7 @@ public class JwtUtil {
     /**
      * İstifadəçi üçün token yaradır
      */
-    public String generateToken(String phoneNumber, String role, Long userId) {
+	public String generateToken(String phoneNumber, String role, UUID userId) {
         logger.debug("Token yaradılır: telefon={}, rol={}", phoneNumber, role);
 
         long expirationTime = System.currentTimeMillis() + jwtExpirationMs;

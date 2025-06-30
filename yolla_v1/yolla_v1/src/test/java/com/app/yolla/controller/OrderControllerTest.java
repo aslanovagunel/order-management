@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,18 +58,18 @@ class OrderControllerTest {
 		request.setNotes("Təcili çatdırılma");
 
 		OrderItemRequest item1 = new OrderItemRequest();
-		item1.setProductId(1L);
+		item1.setProductId(UUID.fromString("a3b01a3e-8c2e-4dc5-b8de-0f5b9b7b74e3"));
 		item1.setQuantity(2);
 
 		OrderItemRequest item2 = new OrderItemRequest();
-		item2.setProductId(2L);
+		item2.setProductId(UUID.fromString("9fef93e3-3333-44cd-94a3-1f45dbf3ac11"));
 		item2.setQuantity(1);
 
 		request.setItems(List.of(item1, item2));
 
 		OrderDTO response = new OrderDTO();
-		response.setId(100L);
-		response.setUserId(10L);
+		response.setId(UUID.fromString("d6f1f8f4-72d4-4c33-92c2-0fbe11e53c9a"));
+		response.setUserId(UUID.fromString("f0a1b672-4a8b-4e12-b48e-4e23a948c1f9"));
 		response.setStatus(OrderStatus.PENDING);
 		response.setTotalAmount(new BigDecimal("50.00"));
 		response.setCreatedAt(LocalDateTime.now());

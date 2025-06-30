@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ class UserControllerTest {
 		request.setRole(UserRole.CUSTOMER);
 
 		UserDTO createdUser = new UserDTO();
-		createdUser.setId(1L);
+		createdUser.setId(UUID.fromString("d6f1f8f4-72d4-4c33-92c2-0fbe11e53c9a"));
 		createdUser.setPhoneNumber(request.getPhoneNumber());
 		createdUser.setFullName(request.getFullName());
 		createdUser.setEmail(request.getEmail());

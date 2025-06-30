@@ -1,16 +1,18 @@
 package com.app.yolla.modules.auth.repository;
 
-import com.app.yolla.modules.auth.entity.OtpCode;
-import com.app.yolla.modules.auth.entity.OtpType;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
+import com.app.yolla.modules.auth.entity.OtpCode;
+import com.app.yolla.modules.auth.entity.OtpType;
 
 /**
  * OTP Repository İnterfeysi
@@ -18,7 +20,7 @@ import java.util.Optional;
  * Bu interfeys OTP kodları ilə əlaqəli verilənlər bazası əməliyyatlarını həyata keçirir.
  */
 @Repository
-public interface OtpRepository extends JpaRepository<OtpCode, Long> {
+public interface OtpRepository extends JpaRepository<OtpCode, UUID> {
 
     /**
      * Telefon nömrəsi və OTP növünə görə ən son aktiv OTP-ni tapır

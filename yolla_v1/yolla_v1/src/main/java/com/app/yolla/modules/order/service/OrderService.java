@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,12 +94,12 @@ public class OrderService {
 		return response;
 	}
 
-	public List<Order> findOrder(Long id) {
+	public List<Order> findOrder(UUID id) {
 		List<Order> p=repository.findOrder(id);
 		return p;
 }
 
-public Order findById(Long id) {
+public Order findById(UUID id) {
 	Optional<Order> op = repository.findById(id);
 	Order o = op.get();
 	return o;

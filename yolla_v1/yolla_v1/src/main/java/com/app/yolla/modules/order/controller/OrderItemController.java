@@ -1,5 +1,7 @@
 package com.app.yolla.modules.order.controller;
 
+import java.util.UUID;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,9 @@ import com.app.yolla.modules.order.dto.OrderItemResponse;
 import com.app.yolla.modules.order.service.OrderItemService;
 import com.app.yolla.shared.dto.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "OrderItem", description = "Sifariş elementləri üzrə əməliyyatlar")
 @RestController
 @RequestMapping(path = "/order-item")
 @CrossOrigin(origins = "*") // CORS icazəsi
@@ -29,7 +33,7 @@ public class OrderItemController {
 
 	@GetMapping(path = "/{orderId}/begin/{begin}/length/{length}")
 	@PreAuthorize("hasRole('CUSTOMER')")
-	public ResponseEntity<ApiResponse<OrderItemResponse>> getOrderItems(@PathVariable("orderId") Long orderId,
+	public ResponseEntity<ApiResponse<OrderItemResponse>> getOrderItems(@PathVariable("orderId") UUID orderId,
 			@PathVariable("begin") Integer begin,
 			@PathVariable("length") Integer length) {
 		try {

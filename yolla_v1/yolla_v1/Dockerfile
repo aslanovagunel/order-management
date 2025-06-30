@@ -29,7 +29,7 @@ RUN chmod +x ./gradlew
 RUN ./gradlew build -x test --no-daemon
 
 # Runtime stage
-FROM openjdk:17-jre-alpine AS runtime
+FROM openjdk:17-alpine AS runtime
 
 # Metadata
 LABEL version="1.0.0"

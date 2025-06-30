@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,23 +50,22 @@ class OrderItemControllerTest {
 	@Test
 	@WithMockUser
 	void testGetOrderItems() throws Exception {
-		Long orderId = 1L;
+		UUID orderId = UUID.fromString("3c4b1a2f-8b00-4d55-a6f9-abcdefabcdef");
 
 		OrderItemResponseDTO item1 = new OrderItemResponseDTO();
-		item1.setProductId(100L);
+		item1.setProductId(UUID.fromString("9e90cbbb-75c3-4d23-87ae-123456789100"));
 		item1.setProductName("Product A");
 		item1.setQuantity(2);
 		item1.setPrice(new BigDecimal("10.50"));
 
 		OrderItemResponseDTO item2 = new OrderItemResponseDTO();
-		item2.setProductId(101L);
+		item2.setProductId(UUID.fromString("9e90cbbb-75c3-4d23-87ae-123456789101"));
 		item2.setProductName("Product B");
 		item2.setQuantity(1);
 		item2.setPrice(new BigDecimal("5.00"));
 
 		OrderItemResponse response = new OrderItemResponse();
-		response.setOrderId(orderId);
-		response.setTotalAmount(new BigDecimal("26.00"));
+		response.setOrderId(UUID.fromString("3c4b1a2f-8b00-4d55-a6f9-abcdefabcdef"));
 		response.setStatus("PENDING");
 		response.setCreatedAt(LocalDateTime.now());
 		response.setItems(List.of(item1, item2));

@@ -2,6 +2,7 @@ package com.app.yolla.modules.user.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public class UserService {
     /**
      * İstifadəçi məlumatlarını yeniləyir
      */
-    public UserDTO updateUser(Long userId, UserUpdateRequest request) {
+	public UserDTO updateUser(UUID userId, UserUpdateRequest request) {
         logger.info("İstifadəçi yenilənir: ID={}", userId);
 
         User user = userRepository.findById(userId)
@@ -102,11 +103,11 @@ public class UserService {
                         "İstifadəçi tapılmadı: " + userId));
 
         // Yalnız dəyişdirilən sahələri yenilə
-        if (request.getFullName() != null) {
+		if (request.getFullName() != null && !request.getFullName().trim().isEmpty()) {
             user.setFullName(request.getFullName());
         }
 
-        if (request.getEmail() != null) {
+		if (request.getEmail() != null && !request.getEmail().trim().isEmpty()) {
             // Email-in digər istifadəçi tərəfindən istifadə olunmadığını yoxla
             if (!request.getEmail().equals(user.getEmail()) &&
                     userRepository.existsByEmail(request.getEmail())) {
@@ -116,11 +117,11 @@ public class UserService {
             user.setEmail(request.getEmail());
         }
 
-        if (request.getRole() != null) {
+		if (request.getRole() != null) {
             user.setRole(request.getRole());
         }
 
-        if (request.getIsActive() != null) {
+		if (request.getIsActive() != null) {
             user.setIsActive(request.getIsActive());
         }
 
@@ -135,7 +136,7 @@ public class UserService {
      * İstifadəçini ID ilə tapır
      */
     @Transactional(readOnly = true)
-    public UserDTO findById(Long userId) {
+	public UserDTO findById(UUID userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "İstifadəçi tapılmadı: " + userId));
@@ -188,7 +189,7 @@ public class UserService {
     /**
      * İstifadəçini soft delete edir (məlumatı silmir, aktiv statusunu dəyişir)
      */
-    public void deactivateUser(Long userId) {
+	public void deactivateUser(UUID userId) {
         logger.info("İstifadəçi deaktiv edilir: ID={}", userId);
 
         User user = userRepository.findById(userId)
@@ -204,7 +205,7 @@ public class UserService {
     /**
      * İstifadəçini yenidən aktivləşdirir
      */
-    public void reactivateUser(Long userId) {
+	public void reactivateUser(UUID userId) {
         logger.info("İstifadəçi yenidən aktivləşdirilir: ID={}", userId);
 
         User user = userRepository.findById(userId)

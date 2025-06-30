@@ -47,7 +47,7 @@ public class OtpService {
     /**
      * Yeni OTP kodu yaradır və göndərir
      */
-    public void generateAndSendOtp(String phoneNumber, OtpType otpType, String ipAddress) {
+	public String generateAndSendOtp(String phoneNumber, OtpType otpType, String ipAddress) {
         logger.info("OTP yaradılır: telefon={}, növ={}", phoneNumber, otpType);
 
         // Əvvəlki aktiv OTP-ləri ləğv et
@@ -84,6 +84,7 @@ public class OtpService {
             logger.error("SMS göndərmə xətası: telefon={}", phoneNumber, e);
             throw new OtpException("SMS göndərilmədi, yenidən cəhd edin", "SMS_SEND_FAILED");
         }
+		return otpCode;
     }
 
     /**

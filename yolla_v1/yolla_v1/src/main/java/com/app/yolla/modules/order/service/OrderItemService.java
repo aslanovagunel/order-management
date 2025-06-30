@@ -2,6 +2,7 @@ package com.app.yolla.modules.order.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class OrderItemService {
 	@Autowired
 	private UserService userService;
 
-	public OrderItemResponse getOrderItems(Long id, Integer length, Integer begin) {
+	public OrderItemResponse getOrderItems(UUID id, Integer length, Integer begin) {
 		String phone = (String) userService.findPhone();
 		UserDTO en = userService.findByPhoneNumber(phone);
 

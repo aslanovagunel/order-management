@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ class ProductControllerTest {
 		request.setStockQuantity(3);
 
 		ProductDTO response = new ProductDTO();
-		response.setId(1L);
+		response.setId(UUID.fromString("d6f1f8f4-72d4-4c33-92c2-0fbe11e53c9a"));
 		response.setName("canta");
 		response.setDescription("tez gelsin");
 		response.setPrice(new BigDecimal("19.3"));

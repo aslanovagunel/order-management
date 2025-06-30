@@ -2,6 +2,7 @@ package com.app.yolla.modules.user.entity;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,13 +14,15 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * İstifadəçi Entity Sinfi
@@ -31,13 +34,16 @@ import jakarta.validation.constraints.Size;
  * əsas məlumatlarını saxlayır (ad, telefon, rol və s.)
  */
 @Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class) // Avtomatik tarix yazmaq üçün
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue
+	private UUID id;
 
     /**
      * Telefon nömrəsi - sistemdə unikal identifikator
@@ -91,8 +97,7 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Konstruktorlar
-    public User() {
-    }
+
 
     public User(String phoneNumber, String fullName, UserRole role) {
         this.phoneNumber = phoneNumber;
@@ -101,11 +106,11 @@ public class User {
     }
 
     // Getter və Setter metodları
-    public Long getId() {
+	public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+	public void setId(UUID id) {
         this.id = id;
     }
 

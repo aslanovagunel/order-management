@@ -2,6 +2,7 @@ package com.app.yolla.modules.product.service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.yolla.modules.product.dto.ProductAddRequest;
 import com.app.yolla.modules.product.dto.ProductDTO;
+import com.app.yolla.modules.product.dto.ProductUpdateRequest;
 import com.app.yolla.modules.product.entity.Product;
 import com.app.yolla.modules.product.repository.ProductRepository;
 import com.app.yolla.modules.user.dto.UserDTO;
@@ -52,13 +54,38 @@ public class ProductService {
 				product.getActive(), product.getCreatedAt(), product.getUpdatedAt());
 	}
 
-	public Product findProduct(Long id) {
+	public Product findProduct(UUID id) {
 		Optional<Product> op = repository.findById(id);
 		if (!op.isPresent()) {
-			throw new MyException("bu id'li mehsul yoxdur");
+			throw new MyException("Bu id'li məhsul yoxdur");
 		}
 		Product p = op.get();
 		return p;
+
+	}
+
+	public ProductDTO updateProduct(ProductUpdateRequest req) {
+		Product p = findProduct(req.getId());
+
+		if (req.getDescription() != null) {
+			p.setDescription(req.getDescription());
+		}
+		if (req.getName() != null) {
+			p.setName(req.getName());
+		}
+		if (req.getPrice() != null) {
+			p.setPrice(req.getPrice());
+		}
+		if (req.getStockQuantity() != null) {
+			p.setStockQuantity(req.getStockQuantity());
+		}
+		repository.save(p);
+		ProductDTO dto = convertToDTO(p);
+		return dto;
+	}
+
+	public void deleteById(UUID id) {
+		Product p = findProduct(id);
 
 	}
 }

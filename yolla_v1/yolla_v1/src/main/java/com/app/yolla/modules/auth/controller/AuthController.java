@@ -1,5 +1,7 @@
 package com.app.yolla.modules.auth.controller;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,7 @@ import com.app.yolla.modules.auth.dto.OtpVerificationRequest;
 import com.app.yolla.modules.auth.service.AuthService;
 import com.app.yolla.shared.dto.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
@@ -30,6 +33,8 @@ import jakarta.validation.Valid;
  * Analogi: Bu sinif bir "qeydiyyat masası" kimidir - gələnləri qarşılayır,
  * sənədlərini yoxlayır və sistemi girişi təmin edir.
  */
+
+@Tag(name = "Auth", description = "İstifadəçi identifikasiyası və token əməliyyatları")
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin(origins = "*")
@@ -48,33 +53,33 @@ public class AuthController {
      * Əgər istifadəçi mövcuddursa giriş, yoxdursa qeydiyyat üçün.
      */
     @PostMapping("/send-otp")
-    public ResponseEntity<ApiResponse<String>> sendOtp(
+	public ResponseEntity<ApiResponse<Map<String, Object>>> sendOtp(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {
 
         logger.info("OTP göndərmə sorğusu: telefon={}", request.getPhoneNumber());
 
         try {
-            // IP ünvanını əldə et
-            String ipAddress = getClientIpAddress(httpRequest);
 
-            String result = authService.sendOtp(request.getPhoneNumber(), ipAddress);
+			String ipAddress = getClientIpAddress(httpRequest);
 
-            ApiResponse<String> response = ApiResponse.success(
-                    "OTP kodu telefon nömrənizə göndərildi",
-                    result
-            );
+			Map<String, Object> sendOtp = authService.sendOtp(request.getPhoneNumber(), ipAddress);
+
+			// Map<String, Object> result = resultEntity.getBody();
+
+			ApiResponse<Map<String, Object>> response = ApiResponse.success("OTP kodu telefon nömrənizə göndərildi",
+					sendOtp);
 
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             logger.error("OTP göndərmə xətası: telefon={}", request.getPhoneNumber(), e);
 
-            ApiResponse<String> response = ApiResponse.error(
+			ApiResponse<Map<String, Object>> response = ApiResponse.error(
                     "OTP göndərilmədi: " + e.getMessage()
             );
 
-            return ResponseEntity.badRequest().body(response);
+			return ResponseEntity.badRequest().body(response);
         }
     }
 
@@ -91,6 +96,7 @@ public class AuthController {
         logger.info("OTP doğrulama sorğusu: telefon={}", request.getPhoneNumber());
 
 		try {
+
             AuthResponse authResponse = authService.verifyOtpAndLogin(
                     request.getPhoneNumber(),
                     request.getOtpCode()

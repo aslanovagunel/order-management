@@ -2,6 +2,7 @@ package com.app.yolla.modules.order.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -19,9 +20,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderDTO {
 
-	private Long id;
+	private UUID id;
 
-	private Long userId;
+	private UUID userId;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;

@@ -20,9 +20,10 @@ import com.app.yolla.modules.order.dto.OrderResponse;
 import com.app.yolla.modules.order.service.OrderService;
 import com.app.yolla.shared.dto.ApiResponse;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-
+@Tag(name = "Order", description = "Sifarişlərə dair əməliyyatlar")
 @RestController
 @RequestMapping(path = "/orders")
 @CrossOrigin(origins = "*") // CORS icazəsi

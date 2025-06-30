@@ -1,5 +1,8 @@
 package com.app.yolla.modules.auth.service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +52,7 @@ public class AuthService {
     /**
      * OTP göndərir - həm mövcud istifadəçilər, həm də yeni qeydiyyat üçün
      */
-    public String sendOtp(String phoneNumber, String ipAddress) {
+	public Map<String, Object> sendOtp(String phoneNumber, String ipAddress) {
         logger.info("OTP göndərmə prosesi başlayır: telefon={}", phoneNumber);
 
         // Rate limiting yoxla
@@ -63,15 +66,19 @@ public class AuthService {
         OtpType otpType = userExists ? OtpType.LOGIN : OtpType.REGISTRATION;
 
         // OTP yaradıb göndər
-        otpService.generateAndSendOtp(phoneNumber, otpType, ipAddress);
+		String sendOtp = otpService.generateAndSendOtp(phoneNumber, otpType, ipAddress);
 
         String message = userExists ?
                 "Giriş üçün OTP göndərildi" :
                 "Qeydiyyat üçün OTP göndərildi";
 
         logger.info("OTP uğurla göndərildi: telefon={}, növ={}", phoneNumber, otpType);
+        Map<String, Object> data = new HashMap<>();
+        data.put("info", message);
+        data.put("otp", sendOtp);
 
-        return message;
+		return data;
+		
     }
 
     /**

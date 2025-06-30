@@ -3,6 +3,7 @@ package com.app.yolla.modules.order.entity;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,7 +15,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -31,10 +31,10 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class) // Avtomatik tarix yazmaq üçün
 public class Order {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue
+	private UUID id;
 
-	private Long userId;
+	private UUID userId;
 
 	@Enumerated(EnumType.STRING)
 	private OrderStatus status;

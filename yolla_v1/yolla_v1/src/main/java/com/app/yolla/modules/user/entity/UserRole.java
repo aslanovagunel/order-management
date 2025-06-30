@@ -20,7 +20,7 @@ public enum UserRole {
      * - Öz sifarişlərini görmək
      * - Profil məlumatlarını yeniləmək
      */
-    CUSTOMER("Müştəri", "ROLE_CUSTOMER"),
+	CUSTOMER("CUSTOMER", "ROLE_CUSTOMER"),
 
     /**
      * HAZIRLAYAN - sifarişləri hazırlayan işçilər
@@ -29,7 +29,7 @@ public enum UserRole {
      * - Sifarişlərin statusunu yeniləmək
      * - Sifarişləri hazırladı kimi qeyd etmək
      */
-    PREPARER("Hazırlayan", "ROLE_PREPARER"),
+	PREPARER("PREPARER", "ROLE_PREPARER"),
 
     /**
      * ADMİN - sistem idarəçiləri
@@ -39,7 +39,7 @@ public enum UserRole {
      * - İstifadəçiləri idarə edə bilir
      * - Sistem hesabatlarını görmək
      */
-    ADMIN("Administrator", "ROLE_ADMIN");
+	ADMIN("ADMIN", "ROLE_ADMIN");
 
     private final String displayName;  // Göstəriləcək ad
     private final String authority;    // Spring Security üçün
