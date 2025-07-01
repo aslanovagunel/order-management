@@ -46,7 +46,7 @@ public class OrderItemService {
 		List<OrderItem> orderItems = repository.findByOrderId(id);
 		List<OrderItemResponseDTO> list = new ArrayList<OrderItemResponseDTO>();
 
-		Order op = orderService.findById(id);
+		Order op = orderService.findByOrder(id);
 		if (!op.getUserId().equals(en.getId())) {
 			throw new RuntimeException("Bu sifariş sizə aid deyil!");
 		}

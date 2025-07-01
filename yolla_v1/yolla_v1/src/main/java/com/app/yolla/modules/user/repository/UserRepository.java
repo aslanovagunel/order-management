@@ -124,4 +124,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 	 */
 	@Query("UPDATE User u SET u.isActive = true WHERE u.id = :userId")
 	void reactivateUser(@Param("userId") UUID userId);
+
+
 }

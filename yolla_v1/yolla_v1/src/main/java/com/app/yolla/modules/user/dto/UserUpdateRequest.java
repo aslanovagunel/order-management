@@ -1,8 +1,6 @@
 package com.app.yolla.modules.user.dto;
 
 import com.app.yolla.modules.user.entity.UserRole;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 
 /**
  * İstifadəçi Yeniləmə Request DTO
@@ -15,10 +13,8 @@ import jakarta.validation.constraints.Size;
  */
 public class UserUpdateRequest {
 
-    @Size(min = 2, max = 255, message = "Ad 2-255 simvol arasında olmalıdır")
     private String fullName;
 
-    @Email(message = "Email düzgün formatda olmalıdır")
     private String email;
 
     private UserRole role;

@@ -54,23 +54,15 @@ public class ProductService {
 				product.getActive(), product.getCreatedAt(), product.getUpdatedAt());
 	}
 
-	public Product findProduct(UUID id) {
-		Optional<Product> op = repository.findById(id);
-		if (!op.isPresent()) {
-			throw new MyException("Bu id'li məhsul yoxdur");
-		}
-		Product p = op.get();
-		return p;
 
-	}
 
-	public ProductDTO updateProduct(ProductUpdateRequest req) {
-		Product p = findProduct(req.getId());
+	public ProductDTO updateProduct(UUID id, ProductUpdateRequest req) {
+		Product p = findProduct(id);
 
-		if (req.getDescription() != null) {
+		if (req.getDescription() != null && !req.getDescription().trim().isEmpty()) {
 			p.setDescription(req.getDescription());
 		}
-		if (req.getName() != null) {
+		if (req.getName() != null && !req.getName().trim().isEmpty()) {
 			p.setName(req.getName());
 		}
 		if (req.getPrice() != null) {
@@ -84,8 +76,23 @@ public class ProductService {
 		return dto;
 	}
 
+	public Product findProduct(UUID id) {
+		Optional<Product> op = repository.findById(id);
+		if (!op.isPresent()) {
+			throw new MyException("Bu id'li məhsul yoxdur");
+		}
+		Product p = op.get();
+		return p;
+
+	}
+
 	public void deleteById(UUID id) {
 		Product p = findProduct(id);
+		repository.deleteById(id);
+	}
+
+	public void savePro(Product product) {
+		repository.save(product);
 
 	}
 }

@@ -1,8 +1,15 @@
 package com.app.yolla.modules.order.dto;
 
-import com.app.yolla.modules.user.entity.UserRole;
-import jakarta.validation.constraints.Email;
+import java.util.List;
+
+import com.app.yolla.modules.order.entity.OrderStatus;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * İstifadəçi Yeniləmə Request DTO
@@ -13,80 +20,21 @@ import jakarta.validation.constraints.Size;
  * Analogi: Bu sinif "profil redaktə formu" kimidir - istifadəçi
  * yalnız dəyişdirmək istədiyi sahələri doldurur.
  */
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderUpdateRequest {
+	@NotNull(message = "Status boş ola bilməz")
+	private OrderStatus status;
 
-    @Size(min = 2, max = 255, message = "Ad 2-255 simvol arasında olmalıdır")
-    private String fullName;
+	@Size(max = 500, message = "Qeyd 500 simvoldan uzun ola bilməz")
+	private String notes;
 
-    @Email(message = "Email düzgün formatda olmalıdır")
-    private String email;
+	@Size(max = 255, message = "Ünvan 255 simvoldan uzun ola bilməz")
+	@NotBlank(message = "Çatdırılma ünvanı boş ola bilməz")
+	private String deliveryAddress;
 
-    private UserRole role;
+	private List<OrderItemUpdateRequest> items;
 
-    private Boolean isActive;
-
-    // Default konstruktor
-    public OrderUpdateRequest() {
-    }
-
-    // Konstruktor
-    public OrderUpdateRequest(String fullName, String email, UserRole role, Boolean isActive) {
-        this.fullName = fullName;
-        this.email = email;
-        this.role = role;
-        this.isActive = isActive;
-    }
-
-    // Getter və Setter metodları
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public UserRole getRole() {
-        return role;
-    }
-
-    public void setRole(UserRole role) {
-        this.role = role;
-    }
-
-    public Boolean getIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean active) {
-        isActive = active;
-    }
-
-    /**
-     * Request-də həqiqətən dəyişiklik olub-olmadığını yoxlayır
-     */
-    public boolean hasAnyChanges() {
-        return fullName != null ||
-                email != null ||
-                role != null ||
-                isActive != null;
-    }
-
-    @Override
-    public String toString() {
-        return "UserUpdateRequest{" +
-                "fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", role=" + role +
-                ", isActive=" + isActive +
-                '}';
-    }
 }

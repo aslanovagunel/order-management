@@ -47,8 +47,13 @@ public class Order {
 
 	private String notes;
 
+	@Column(nullable = false, length = 255)
+	private String deliveryAddress;
+
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<OrderItem> items;
+
+	private LocalDateTime deliveryTime;
 
 
 }

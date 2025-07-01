@@ -161,6 +161,32 @@ public class UserController {
         }
     }
 
+	/**
+	 * email ilə istifadəçi tapır GET /users/email/{email}
+	 */
+
+	@GetMapping("/email/{email}")
+	@PreAuthorize("hasRole('ADMIN')")
+	public ResponseEntity<ApiResponse<UserDTO>> getUserByEmail(@PathVariable(name = "email") String email) {
+
+		logger.debug("Email ilə istifadəçi sorğusu: {}", email);
+
+		try {
+			UserDTO user = userService.getUserByEmail(email);
+
+			ApiResponse<UserDTO> response = new ApiResponse<>(true, "İstifadəçi tapıldı", user);
+
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			logger.error("Telefon nömrəsi ilə istifadəçi tapma xətası: {}", email, e);
+
+			ApiResponse<UserDTO> response = new ApiResponse<>(false, "İstifadəçi tapılmadı: " + e.getMessage(), null);
+
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+	}
+
     /**
      * Bütün istifadəçiləri siyahıya alır (səhifələməklə)
      * GET /users?page=0&size=10&sort=createdAt,desc
@@ -209,7 +235,7 @@ public class UserController {
      * PUT /users/{id}
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or @userService.findById(#id).phoneNumber == authentication.name")
+	@PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @userService.findById(#id).phoneNumber == authentication.name)")
     public ResponseEntity<ApiResponse<UserDTO>> updateUser(
 			@PathVariable("id") UUID id,
             @Valid @RequestBody UserUpdateRequest request) {
@@ -245,7 +271,7 @@ public class UserController {
      * DELETE /users/{id}
      */
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN') or (hasRole('CUSTOMER') and @userService.findById(#id).phoneNumber == authentication.name)")
 	public ResponseEntity<ApiResponse<Void>> deactivateUser(@PathVariable("id") UUID id) {
 
         logger.info("İstifadəçi deaktiv etmə sorğusu: ID={}", id);
@@ -322,9 +348,13 @@ public class UserController {
         try {
             List<UserDTO> users = userService.findUsersByRole(role);
 
+            String message = users.isEmpty()
+            	    ? "Bu rola uyğun heç bir istifadəçi tapılmadı"
+            	    : "İstifadəçilər tapıldı";
+
             ApiResponse<List<UserDTO>> response = new ApiResponse<>(
                     true,
-                    "İstifadəçilər tapıldı",
+					message,
                     users
             );
 
@@ -387,7 +417,7 @@ public class UserController {
     @GetMapping("/recent")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<UserDTO>>> getRecentUsers(
-            @RequestParam(defaultValue = "7") int days) {
+			@RequestParam(name = "days", defaultValue = "7") int days) {
 
         logger.debug("Son istifadəçilər sorğusu: days={}", days);
 

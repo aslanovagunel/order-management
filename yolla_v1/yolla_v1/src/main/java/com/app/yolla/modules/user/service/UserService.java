@@ -261,4 +261,13 @@ public class UserService {
 		Object principal = authentication.getPrincipal();
 		return principal;
 	}
+
+	public UserDTO getUserByEmail(String email) {
+		logger.debug("Email ilə istifadəçi axtarılır: {}", email);
+
+		User user = userRepository.findByEmail(email)
+				.orElseThrow(() -> new ResourceNotFoundException("Bu email ilə istifadəçi tapılmadı: " + email));
+
+		return convertToDTO(user);
+	}
 }

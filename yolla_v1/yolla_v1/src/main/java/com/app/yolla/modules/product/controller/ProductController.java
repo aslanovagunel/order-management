@@ -61,13 +61,14 @@ public class ProductController {
 			}
 		}
 
-		@PutMapping
+		@PutMapping(path = "/{id}")
 		@PreAuthorize("hasRole('ADMIN')")
-		public ResponseEntity<ApiResponse<ProductDTO>> update(@Valid @RequestBody ProductUpdateRequest req,
+		public ResponseEntity<ApiResponse<ProductDTO>> update(@PathVariable("id") UUID id,
+				@Valid @RequestBody ProductUpdateRequest req,
 				BindingResult result) {
 
 			try {
-				ProductDTO updateProduct = service.updateProduct(req);
+				ProductDTO updateProduct = service.updateProduct(id, req);
 
 				ApiResponse<ProductDTO> response = new ApiResponse<>(true, "Məhsul uğurla dəyişdirildi", updateProduct);
 
@@ -84,7 +85,7 @@ public class ProductController {
 
 		@DeleteMapping(path = "/{id}")
 		@PreAuthorize("hasRole('ADMIN')")
-		public ResponseEntity<?> deleteById(@PathVariable UUID id) {
+		public ResponseEntity<?> deleteById(@PathVariable("id") UUID id) {
 
 			try {
 				service.deleteById(id);

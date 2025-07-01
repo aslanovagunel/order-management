@@ -65,8 +65,10 @@ public class User {
     /**
      * Email ünvanı (ixtiyari)
      */
-    @Column(name = "email", length = 255)
+
     @Email(message = "Email düzgün formatda olmalıdır")
+	@NotBlank(message = "Email boş ola bilməz")
+	@Column(name = "email", length = 255, unique = true)
     private String email;
 
     /**
