@@ -164,4 +164,40 @@ public class OrderController {
 			return ResponseEntity.badRequest().body(response);
 		}
 	}
+
+	@PutMapping("/{id}/deliver")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('PREPARER')")
+	public ResponseEntity<ApiResponse<OrderDTO>> deliverOrder(@PathVariable("id") UUID id,
+			Authentication authentication) {
+
+		String currentUserPhone = authentication.getName();
+		try {
+			OrderDTO updatedOrder = service.deliverOrder(id, currentUserPhone);
+			ApiResponse<OrderDTO> response = new ApiResponse<>(true, "Sifariş çatdırıldı (delivered)", updatedOrder);
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			ApiResponse<OrderDTO> response = new ApiResponse<>(false,
+					"Sifariş çatdırılarkən xəta baş verdi: " + e.getMessage(), null);
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
+
+	@PutMapping("/{id}/cancel")
+	@PreAuthorize("hasRole('ADMIN') or hasRole('CUSTOMER')")
+	public ResponseEntity<ApiResponse<OrderDTO>> cancelOrder(@PathVariable("id") UUID id,
+			Authentication authentication) {
+
+		String currentUserPhone = authentication.getName();
+		try {
+			OrderDTO updatedOrder = service.cancelOrder(id, currentUserPhone);
+			ApiResponse<OrderDTO> response = new ApiResponse<>(true, "Sifariş ləğv olundu (cancelled)", updatedOrder);
+			return ResponseEntity.ok(response);
+
+		} catch (Exception e) {
+			ApiResponse<OrderDTO> response = new ApiResponse<>(false,
+					"Sifariş ləğv olunarkən xəta baş verdi: " + e.getMessage(), null);
+			return ResponseEntity.badRequest().body(response);
+		}
+	}
 }

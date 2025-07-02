@@ -279,7 +279,53 @@ public class OrderService {
 		}
 
 		order.setStatus(OrderStatus.SHIPPED);
+
+		repository.save(order);
+
+		return convertToDTO(order);
+	}
+
+	public OrderDTO deliverOrder(UUID id, String currentUserPhone) {
+		Order order = findByOrder(id);
+
+		UserDTO currentUser = userService.findByPhoneNumber(currentUserPhone);
+
+		boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
+		boolean isPreparer = currentUser.getRole() == UserRole.PREPARER;
+
+		if (!isAdmin && !isPreparer) {
+			throw new MyException("Bu əməliyyatı icra etmək üçün icazəniz yoxdur");
+		}
+
+		if (order.getStatus() != OrderStatus.SHIPPED) {
+			throw new MyException("Yalnız SHIPPED statusundakı sifariş çatdırıla bilər");
+		}
+
+		order.setStatus(OrderStatus.DELIVERED);
 		order.setDeliveryTime(LocalDateTime.now());
+
+		repository.save(order);
+
+		return convertToDTO(order);
+	}
+
+	public OrderDTO cancelOrder(UUID id, String currentUserPhone) {
+		Order order = findByOrder(id);
+
+		UserDTO currentUser = userService.findByPhoneNumber(currentUserPhone);
+
+		boolean isAdmin = currentUser.getRole() == UserRole.ADMIN;
+		boolean isCustomer = currentUser.getRole() == UserRole.CUSTOMER;
+
+		if (!isAdmin && !isCustomer) {
+			throw new MyException("Bu əməliyyatı icra etmək üçün icazəniz yoxdur");
+		}
+
+		if (order.getStatus() != OrderStatus.PENDING && order.getStatus() != OrderStatus.CONFIRMED) {
+			throw new MyException("Yalnız SHIPPED  və CONFIRMED statusundakı sifariş ləğv oluna bilər");
+		}
+
+		order.setStatus(OrderStatus.CANCELLED);
 
 		repository.save(order);
 
