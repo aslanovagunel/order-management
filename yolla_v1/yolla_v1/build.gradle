@@ -26,10 +26,12 @@ repositories {
 	mavenCentral()
 }
 
+
 ext {
 	jwtVersion = '0.11.5'
 	springdocVersion = '2.2.0'
 	testcontainersVersion = '1.19.3'
+	
 }
 dependencies {
 	// Spring Boot Starters
@@ -47,9 +49,11 @@ dependencies {
 	implementation 'org.glassfish:jakarta.el:5.0.0-M1'
 
 	// Database
-	runtimeOnly 'org.postgresql:postgresql'
+	
 	// H2 database development və test üçün
 	implementation 'com.h2database:h2:2.1.214'
+	
+	implementation 'mysql:mysql-connector-java:8.0.33'
 
 	// JWT Libraries - Müvəqqəti söndürülüb
 	// implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"

@@ -59,33 +59,33 @@ public enum OtpType {
     /**
      * OTP-nin etibarlılıq müddətini dəqiqə ilə qaytarır
      */
-    public int getExpirationMinutes() {
-        switch (this) {
-            case LOGIN:
-            case REGISTRATION:
-                return 5; // 5 dəqiqə
-            case PASSWORD_RESET:
-                return 10; // 10 dəqiqə
-            case PHONE_CHANGE:
-                return 15; // 15 dəqiqə
-            default:
-                return 5;
-        }
-    }
+	public int getExpirationMinutes() {
+		switch (this) {
+		case LOGIN:
+		case REGISTRATION:
+			return 5; // 5 dəqiqə
+		case PASSWORD_RESET:
+			return 10; // 10 dəqiqə
+		case PHONE_CHANGE:
+			return 15; // 15 dəqiqə
+		default:
+			return 5;
+		}
+	}
 
-    /**
-     * Maksimum cəhd sayını qaytarır
-     */
-    public int getMaxAttempts() {
-        switch (this) {
-            case LOGIN:
-            case REGISTRATION:
-                return 3;
-            case PASSWORD_RESET:
-            case PHONE_CHANGE:
-                return 5;
-            default:
-                return 3;
-        }
-    }
+	/**
+	 * Maksimum cəhd sayını qaytarır
+	 */
+	public int getMaxAttempts() {
+		switch (this) {
+		case LOGIN:
+		case REGISTRATION:
+			return 3;
+		case PASSWORD_RESET:
+		case PHONE_CHANGE:
+			return 5;
+		default:
+			return 3;
+		}
+	}
 }

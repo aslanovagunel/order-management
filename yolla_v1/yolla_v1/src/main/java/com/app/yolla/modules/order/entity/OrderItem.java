@@ -3,10 +3,14 @@ package com.app.yolla.modules.order.entity;
 import java.math.BigDecimal;
 import java.util.UUID;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.app.yolla.modules.product.entity.Product;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
@@ -29,7 +33,10 @@ import lombok.NoArgsConstructor;
 public class OrderItem {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(name = "id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
+	@JdbcTypeCode(SqlTypes.CHAR)
 	private UUID id;
 
 	@ManyToOne(fetch = FetchType.LAZY)

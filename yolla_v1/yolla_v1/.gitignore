@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Docker və MySQL üçün lokal data faylları
+data/
+logs/
+*.sock
+build-cache/

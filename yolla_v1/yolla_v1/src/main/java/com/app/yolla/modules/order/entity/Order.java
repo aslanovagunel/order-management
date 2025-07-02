@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import jakarta.persistence.CascadeType;
@@ -31,12 +34,16 @@ import lombok.NoArgsConstructor;
 @EntityListeners(AuditingEntityListener.class) // Avtomatik tarix yazmaq üçün
 public class Order {
 	@Id
-	@GeneratedValue
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(name = "id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
+	@JdbcTypeCode(SqlTypes.CHAR)
 	private UUID id;
 
 	private UUID userId;
 
 	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
 	private OrderStatus status;
 
 	@Column(nullable = false)

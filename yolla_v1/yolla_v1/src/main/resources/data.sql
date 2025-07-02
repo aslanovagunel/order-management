@@ -1,2 +1,2 @@
-insert into users(id, phone_number, full_name, email, role, is_active, created_at, updated_at) values
-('d6f1f8f4-72d4-4c33-92c2-0fbe11e53c9a', '+994555045034', 'aslanli', 'aslanli@gmail.com', 'ADMIN', true, '2025-06-06', '2025-06-03');
+INSERT INTO users(id, phone_number, full_name, email, role, is_active, created_at, updated_at)
+VALUES ('4f1c1e2a-2c5b-4c9f-9435-2c73438faaa3', '+994555045437', 'aslanli', 'asl@gmail.com', 'ADMIN', true, '2025-06-06', '2025-06-03');

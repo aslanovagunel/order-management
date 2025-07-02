@@ -2,29 +2,29 @@
 # Bu fayl bütün servislər (app, database, message queue) birlikdə işə salır
 
 services:
-  # PostgreSQL Database
-  postgres:
-    image: postgres
-    container_name: order-system-postgres
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: order-system-mysql
     environment:
-      POSTGRES_DB: order_system_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: your_password_here
-      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      MYSQL_ROOT_PASSWORD: root_password_here
+      MYSQL_DATABASE: order_system_db
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: app_password
     ports:
-      - "5432:5432"
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
     networks:
       - order-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d order_system_db"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "app_user", "-proot_password_here"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 30s
+
 
   # RabbitMQ Message Queue
   rabbitmq:
@@ -70,15 +70,15 @@ services:
   # Order Management Application
   app_yolla:
     build:
-      context: .
+      context: .   
       dockerfile: Dockerfile
       target: runtime
     container_name: order-system-app
     environment:
       # Database konfiqurasiyası
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/order_system_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: your_password_here
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/order_system_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: app_user
+      SPRING_DATASOURCE_PASSWORD: app_password
 
       # RabbitMQ konfiqurasiyası
       SPRING_RABBITMQ_HOST: rabbitmq
@@ -111,7 +111,7 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      postgres:
+      mysql:
         condition: service_healthy
       rabbitmq:
         condition: service_healthy
@@ -155,12 +155,12 @@ networks:
 
 # Volume konfiqurasiyası
 volumes:
-  postgres_data:
+  mysql_data:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ./data/postgres
+      device: ./data/mysql
 
   rabbitmq_data:
     driver: local

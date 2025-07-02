@@ -20,12 +20,12 @@ spring:
   application:
     name: order-management-system
 
-  # PostgreSQL Production Database
+  # MySql Production Database
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/order_system_db}
-    username: ${DATABASE_USERNAME:postgres}
-    password: ${DATABASE_PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/order_system_db?useSSL=false&serverTimezone=UTC}
+    username: ${DATABASE_USERNAME:root}
+    password: ${DATABASE_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
     # Connection pool konfiqurasiyası
     hikari:
       connection-timeout: 20000
@@ -38,11 +38,11 @@ spring:
   # JPA və Hibernate (production üçün)
   jpa:
     hibernate:
-      ddl-auto: validate  # Məhsulda schema dəyişikliyi etmə
+      ddl-auto: none  # Məhsulda schema dəyişikliyi etmə
     show-sql: false      # Performance üçün SQL göstərmə
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
         jdbc:
           batch_size: 20
         order_inserts: true

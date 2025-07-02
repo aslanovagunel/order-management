@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderCreateRequest {
 
+
 	@NotNull(message = "Sifariş statusu boş ola bilməz")
 	private OrderStatus status = OrderStatus.PENDING;
 

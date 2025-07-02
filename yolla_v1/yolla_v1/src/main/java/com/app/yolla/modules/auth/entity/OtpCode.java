@@ -4,6 +4,9 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -18,7 +21,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-
+import lombok.Data;
 /**
  * OTP Kodu Entity Sinfi
  * <p>
@@ -30,11 +33,15 @@ import jakarta.validation.constraints.Size;
  */
 @Entity
 @Table(name = "otp_codes")
+@Data
 @EntityListeners(AuditingEntityListener.class)
 public class OtpCode {
 
-    @Id
-	@GeneratedValue
+	@Id
+	@GeneratedValue(generator = "uuid2")
+	@GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
+	@Column(name = "id", columnDefinition = "VARCHAR(36)", nullable = false, updatable = false)
+	@JdbcTypeCode(SqlTypes.CHAR)
 	private UUID id;
 
     /**
@@ -82,7 +89,7 @@ public class OtpCode {
      * OTP növü (LOGIN, REGISTRATION, PASSWORD_RESET)
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "otp_type", length = 20)
+	@Column(name = "otp_type", length = 20)
     private OtpType otpType = OtpType.LOGIN;
 
     /**
@@ -93,148 +100,145 @@ public class OtpCode {
 	private LocalDateTime createdAt = LocalDateTime.now();
 
     // Konstruktorlar
-    public OtpCode() {
-    }
+	public OtpCode() {
+	}
 
-    public OtpCode(String phoneNumber, String otpCode, LocalDateTime expiresAt, OtpType otpType) {
-        this.phoneNumber = phoneNumber;
-        this.otpCode = otpCode;
-        this.expiresAt = expiresAt;
-        this.otpType = otpType;
-    }
+	public OtpCode(String phoneNumber, String otpCode, LocalDateTime expiresAt, OtpType otpType) {
+		this.phoneNumber = phoneNumber;
+		this.otpCode = otpCode;
+		this.expiresAt = expiresAt;
+		this.otpType = otpType;
+	}
 
-    // Utility metodları
+	// Utility metodları
 
-    /**
-     * OTP kodunun vaxtının bitib-bitmədiyini yoxlayır
-     */
-    public boolean isExpired() {
-        return LocalDateTime.now().isAfter(this.expiresAt);
-    }
+	/**
+	 * OTP kodunun vaxtının bitib-bitmədiyini yoxlayır
+	 */
+	public boolean isExpired() {
+		return LocalDateTime.now().isAfter(this.expiresAt);
+	}
 
-    /**
-     * OTP kodunun etibarlı olub-olmadığını yoxlayır
-     */
-    public boolean isValid() {
-        return !isUsed && !isExpired();
-    }
+	/**
+	 * OTP kodunun etibarlı olub-olmadığını yoxlayır
+	 */
+	public boolean isValid() {
+		return !isUsed && !isExpired();
+	}
 
-    /**
-     * OTP kodunu istifadə olunmuş kimi qeyd edir
-     */
-    public void markAsUsed() {
-        this.isUsed = true;
-    }
+	/**
+	 * OTP kodunu istifadə olunmuş kimi qeyd edir
+	 */
+	public void markAsUsed() {
+		this.isUsed = true;
+	}
 
-    /**
-     * Cəhd sayını artırır
-     */
-    public void incrementAttemptCount() {
-        this.attemptCount = (this.attemptCount == null ? 0 : this.attemptCount) + 1;
-    }
+	/**
+	 * Cəhd sayını artırır
+	 */
+	public void incrementAttemptCount() {
+		this.attemptCount = (this.attemptCount == null ? 0 : this.attemptCount) + 1;
+	}
 
-    /**
-     * Maksimum cəhd sayına çatıb-çatmadığını yoxlayır
-     */
-    public boolean hasExceededMaxAttempts(int maxAttempts) {
-        return this.attemptCount != null && this.attemptCount >= maxAttempts;
-    }
+	/**
+	 * Maksimum cəhd sayına çatıb-çatmadığını yoxlayır
+	 */
+	public boolean hasExceededMaxAttempts(int maxAttempts) {
+		return this.attemptCount != null && this.attemptCount >= maxAttempts;
+	}
 
-    // Getter və Setter metodları
+	// Getter və Setter metodları
 	public UUID getId() {
-        return id;
-    }
+		return id;
+	}
 
 	public void setId(UUID id) {
-        this.id = id;
-    }
+		this.id = id;
+	}
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
 
-    public String getOtpCode() {
-        return otpCode;
-    }
+	public String getOtpCode() {
+		return otpCode;
+	}
 
-    public void setOtpCode(String otpCode) {
-        this.otpCode = otpCode;
-    }
+	public void setOtpCode(String otpCode) {
+		this.otpCode = otpCode;
+	}
 
-    public LocalDateTime getExpiresAt() {
-        return expiresAt;
-    }
+	public LocalDateTime getExpiresAt() {
+		return expiresAt;
+	}
 
-    public void setExpiresAt(LocalDateTime expiresAt) {
-        this.expiresAt = expiresAt;
-    }
+	public void setExpiresAt(LocalDateTime expiresAt) {
+		this.expiresAt = expiresAt;
+	}
 
-    public Boolean getIsUsed() {
-        return isUsed;
-    }
+	public Boolean getIsUsed() {
+		return isUsed;
+	}
 
-    public void setIsUsed(Boolean used) {
-        isUsed = used;
-    }
+	public void setIsUsed(Boolean used) {
+		isUsed = used;
+	}
 
-    public Integer getAttemptCount() {
-        return attemptCount;
-    }
+	public Integer getAttemptCount() {
+		return attemptCount;
+	}
 
-    public void setAttemptCount(Integer attemptCount) {
-        this.attemptCount = attemptCount;
-    }
+	public void setAttemptCount(Integer attemptCount) {
+		this.attemptCount = attemptCount;
+	}
 
-    public String getIpAddress() {
-        return ipAddress;
-    }
+	public String getIpAddress() {
+		return ipAddress;
+	}
 
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
-    }
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
 
-    public OtpType getOtpType() {
-        return otpType;
-    }
+	public OtpType getOtpType() {
+		return otpType;
+	}
 
-    public void setOtpType(OtpType otpType) {
-        this.otpType = otpType;
-    }
+	public void setOtpType(OtpType otpType) {
+		this.otpType = otpType;
+	}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+	public LocalDateTime getCreatedAt() {
+		return createdAt;
+	}
 
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
+	public void setCreatedAt(LocalDateTime createdAt) {
+		this.createdAt = createdAt;
+	}
 
-    // equals və hashCode
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        OtpCode otpCode = (OtpCode) o;
-        return Objects.equals(id, otpCode.id);
-    }
+	// equals və hashCode
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+		OtpCode otpCode = (OtpCode) o;
+		return Objects.equals(id, otpCode.id);
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-    @Override
-    public String toString() {
-        return "OtpCode{" +
-                "id=" + id +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", otpType=" + otpType +
-                ", isUsed=" + isUsed +
-                ", expiresAt=" + expiresAt +
-                '}';
-    }
+	@Override
+	public String toString() {
+		return "OtpCode{" + "id=" + id + ", phoneNumber='" + phoneNumber + '\'' + ", otpType=" + otpType + ", isUsed="
+				+ isUsed + ", expiresAt=" + expiresAt + '}';
+	}
 }

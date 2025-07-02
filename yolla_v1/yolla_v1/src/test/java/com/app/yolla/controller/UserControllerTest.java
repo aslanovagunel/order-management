@@ -72,7 +72,7 @@ class UserControllerTest {
 				.content(objectMapper.writeValueAsString(request))).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.success").value(true))
 				.andExpect(jsonPath("$.message").value("İstifadəçi uğurla yaradıldı"))
-				.andExpect(jsonPath("$.data.id").value(1))
+				.andExpect(jsonPath("$.data.id").value("d6f1f8f4-72d4-4c33-92c2-0fbe11e53c9a"))
 				.andExpect(jsonPath("$.data.phoneNumber").value("+994501234567"))
 				.andExpect(jsonPath("$.data.fullName").value("Test User"))
 				.andExpect(jsonPath("$.data.email").value("test@example.com"))
